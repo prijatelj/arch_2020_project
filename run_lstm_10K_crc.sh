@@ -15,4 +15,5 @@ python3 "$BASE_PATH/lstm.py" \
     "$BASE_PATH/trace_files/gcc-10K.txt" \
     -o "$BASE_PATH/results/lstm/preds_10k_lstm-w2.csv"
     --window_size 2 \
-    --units 1
+    --units 1 \
+    --cpu_cores 4 \

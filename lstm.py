@@ -89,6 +89,38 @@ class BranchLSTM(object):
         return preds
 
 
+def add_hardware_args(parser):
+    """Adds the arguments detailing the hardware to be used."""
+    # TODO consider packaging as a dict/NestedNamespace
+    # TODO consider a boolean or something to indicate when to pass a
+    # tensorflow session or to use it as default
+
+    parser.add_argument(
+        '--cpu',
+        default=1,
+        type=int,
+        help='The number of available CPUs.',
+    )
+    parser.add_argument(
+        '--cpu_cores',
+        default=1,
+        type=int,
+        help='The number of available cores per CPUs.',
+    )
+    parser.add_argument(
+        '--gpu',
+        default=0,
+        type=int,
+        help='The number of available GPUs. Pass negative value if no CUDA.',
+    )
+    parser.add_argument(
+        '--which_gpu',
+        default=None,
+        type=int,
+        help='The number of available GPUs. Pass negative value if no CUDA.',
+    )
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Test the LSTM branch predictor.',
@@ -151,7 +183,18 @@ def parse_args():
         help='The update freq of TensorBoard.',
     )
 
-    return parser.parse_args()
+    add_hardware_args(parser)
+
+    args = parser.parse_args()
+
+    # Set the Hardware
+    keras.backend.set_session(tf.Session(config=get_tf_config(
+        args.cpu_cores,
+        args.cpu,
+        args.gpu,
+    )))
+
+    return args
 
 
 if __name__ == '__main__':

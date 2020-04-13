@@ -5,6 +5,7 @@ from keras.layers import LSTM, Activation, Input, Dense
 from keras.models import Model
 from keras.callbacks.tensorboard_v1 import TensorBoard
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 import data_loader
 
@@ -52,7 +53,6 @@ class BranchLSTM(object):
         self.model.compile(
             optimizer='adam',
             loss='binary_crossentropy',
-            batch_size=1,
             metrics=['accuracy'],
         )
 
@@ -65,19 +65,20 @@ class BranchLSTM(object):
         return self.model.predict(*args, **kwargs)
 
     def fit(self, *args, **kwargs):
-        return self.model.predict(*args, **kwargs)
+        return self.model.fit(*args, **kwargs)
 
     def online(self, x, y):
         # TODO save history and repeat in order for multiple epochs?
+        y = y.reshape(-1,1)
 
         preds = []
-        for win_x in window_data(x, self.window_size):
+        for i,win_x in enumerate(window_data(x, self.window_size)):
             win_x = win_x[np.newaxis, ...]
-            preds.append(self.predict(win_x))
+            preds.append(self.predict(win_x, batch_size=1))
             self.fit(
-                win_x,
-                y,
-                #batch_size=1,
+                x=win_x,
+                y=y[i],
+                batch_size=1,
                 shuffle=False,
                 epochs=1,
                 callbacks=self.callbacks,
@@ -166,7 +167,8 @@ if __name__ == '__main__':
         window_size=args.window_size,
     )
 
-    preds = lstm.online(features, labels)
+    preds = np.concatenate(lstm.online(features, labels))
+    print(accuracy_score(labels, preds))
 
     if isinstance(args.out_file, str):
         np.savetxt(args.out_file, preds)

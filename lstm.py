@@ -16,10 +16,10 @@ def window_data(x, window_size, batch_size=1):
     assert window_size >= 1
 
     if len(x.shape) == 1:
-        windowed_x = np.append(np.zeros(window_size-1), x)
+        windowed_x = np.append(np.zeros(window_size), x)
     else:
         windowed_x = np.vstack((
-            np.zeros((max(1, window_size - 1), x.shape[1])),
+            np.zeros((window_size, x.shape[1])),
             x,
         ))
 
@@ -71,8 +71,10 @@ class BranchLSTM(object):
         # TODO save history and repeat in order for multiple epochs?
         y = y.reshape(-1,1)
 
+        print(f'y reshape shape = {y.shape}')
+
         preds = []
-        for i,win_x in enumerate(window_data(x, self.window_size)):
+        for i, win_x in enumerate(window_data(x, self.window_size)):
             win_x = win_x[np.newaxis, ...]
             preds.append(self.predict(win_x, batch_size=1))
             self.fit(
@@ -168,7 +170,7 @@ if __name__ == '__main__':
     )
 
     preds = np.concatenate(lstm.online(features, labels))
-    print(accuracy_score(labels, preds))
+    print(accuracy_score(labels, np.round(preds)))
 
     if isinstance(args.out_file, str):
         np.savetxt(args.out_file, preds)

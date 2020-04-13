@@ -18,6 +18,7 @@ class BranchPredict():
                     self.predictions.append(curStatus)
                     self.bht_list[ght][pc_addr] = 0
                 else:
+                    self.predictions.append(1 - curStatus)
                     self.bht_list[ght][pc_addr] = 1
             else:
                 if pc_addr in self.bht_list[ght]:
@@ -27,6 +28,7 @@ class BranchPredict():
                         self.hits += 1
                         self.predictions.append(curStatus)
                     else:
+                        self.predictions.append(1 - curStatus)
                         self.bht_list[ght][pc_addr] = curStatus
                 else:
                     # if pc_addr is not in history save the current branch status
@@ -35,6 +37,7 @@ class BranchPredict():
                         self.predictions.append(curStatus)
                         self.bht_list[ght][pc_addr] = 0
                     else:
+                        self.predictions.append(1 - curStatus)
                         self.bht_list[ght][pc_addr] = 1
         if n == 2:
             # 2-bit predictor
@@ -45,6 +48,7 @@ class BranchPredict():
                     self.predictions.append(curStatus)
                     self.bht_list[ght][pc_addr] = 0
                 elif curStatus == 1:
+                    self.predictions.append(1 - curStatus)
                     self.bht_list[ght][pc_addr] = 1
             else:
                 # if pc_addr in history get the previous branch status and update it with the current branch status
@@ -61,13 +65,17 @@ class BranchPredict():
                             self.predictions.append(curStatus)
                             newStatus = 0
                         elif prevStatus == 2:
+                            self.predictions.append(1 - curStatus)
                             newStatus = 0
                         elif prevStatus == 3:
+                            self.predictions.append(1 - curStatus)
                             newStatus = 2
                     else:
                         if prevStatus == 0:
+                            self.predictions.append(1 - curStatus)
                             newStatus = 1
                         elif prevStatus == 1:
+                            self.predictions.append(1 - curStatus)
                             newStatus = 3
                         elif prevStatus == 2:
                             self.hits += 1
@@ -84,6 +92,7 @@ class BranchPredict():
                         self.predictions.append(curStatus)
                         self.bht_list[ght][pc_addr] = 0
                     elif curStatus == 1:
+                        self.predictions.append(1 - curStatus)
                         self.bht_list[ght][pc_addr] = 1
 
 

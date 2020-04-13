@@ -86,7 +86,7 @@ int main (int argc, char *argv[])
         table512[i] = table1024[i] = 7;
         gtable[0][i] = gtable[1][i] = gtable[2][i] = gtable[3][i] = gtable[4][i] = 
         gtable[5][i] = gtable[6][i] = gtable[7][i] = gtable[8][i] = 3;
-   }
+    }
     for (int i = 512; i < 1024; i++) {
         table1024[i] = 7;
         gtable[0][i] = gtable[1][i] = gtable[2][i] = gtable[3][i] = gtable[4][i] = 

@@ -8,7 +8,8 @@ def get_data(data_path, k=0):
     with open(data_path, 'r') as reader:
         for line in reader.readlines():
             rec = line.strip().split(" ")
-            addr_binary = bin(int(rec[0], 16))[2 + k:]
+            addr_binary = bin(int(rec[0], 16))[-k:]
+            print(addr_binary)
 
             target = ''
             if rec[1] == "T":

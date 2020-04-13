@@ -1,7 +1,6 @@
 import sys
 import argparse
 
-
 class BranchPredict():
     total = 0
     hits = 0
@@ -116,6 +115,7 @@ if __name__ == '__main__':
                 if m > 0:
                     # shifting the global history table by 1 bit
                     ght = ght[1:] + str(branch_taken)
+            print('dataset: ', filename.split('/')[-1])
             print('(m,n): ', m, n)
             print('LSB bits of PC used: ', k)
             print('Total: ', predict.total)

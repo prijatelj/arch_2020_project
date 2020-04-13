@@ -1,8 +1,12 @@
 """Keras predictor for"""
+import argparse
+
 from keras.layers import LSTM, Activation, Input, Dense
 from keras.models import Model
+from keras.callbacks.tensorboard_v1 import TensorBoard
 import numpy as np
 
+import data_loader
 
 def window_data(x, window_size, batch_size=1):
     """Delievers the data in a window format, appending zeros to beginning of
@@ -28,13 +32,15 @@ class BranchLSTM(object):
     def __init__(
         self,
         input_shape,
-        units=2,
+        units=1,
         hidden_layers=1,
         output_shape=1,
-        input_buffer_size=1,
+        window_size=1,
+        tfboard_log='./log/lstm',
+        update_freq=10000,
     ):
-        self.input_vector = Input(shape=input_shape * input_buffer_size)
-        self.input_buffer_size = input_buffer_size
+        self.input_vector = Input(shape=input_shape * window_size)
+        self.window_size = window_size
 
         x = self.input_vector
         for i in range(hidden_layers):
@@ -49,6 +55,11 @@ class BranchLSTM(object):
             batch_size=1,
         )
 
+        self.callbacks = [TensorBoard(
+            tfboard_log,
+            update_freq=10000,
+        )]
+
     def predict(self, *args, **kwargs):
         return self.model.predict(*args, **kwargs)
 
@@ -56,11 +67,93 @@ class BranchLSTM(object):
         return self.model.predict(*args, **kwargs)
 
     def online(self, x, y):
-        # TODO make windows
+        # TODO save history and repeat in order for multiple epochs?
 
+        preds = []
         for i in len(x):
-            win_x = window_data(x, self.input_buffer_size)
-            preds = self.predict(x, batch_size=1)
-            self.fit(x, y, batch_size=1)
+            win_x = window_data(x, self.window_size)
+            preds.append(self.predict(x, batch_size=1))
+            self.fit(
+                x,
+                y,
+                batch_size=1,
+                shuffle=False,
+                epochs=1,
+                callbacks=self.callbacks,
+            )
 
         return preds
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Test the LSTM branch predictor.',
+    )
+
+    parser.add_argument(
+        'in_file',
+        help='The data file to test on.',
+    )
+
+    parser.add_argument(
+        '-o',
+        '--out_file',
+        default=None,
+        help='The CSV output file path.',
+    )
+
+    parser.add_argument(
+        '-h',
+        '--hidden_layers',
+        default=1, type=int,
+        help='The number of hidden layers in the ANN.',
+    )
+
+    parser.add_argument(
+        '-u',
+        '--units',
+        default=1,
+        type=int,
+        help='The number of units per hidden layers in the ANN.',
+    )
+
+    parser.add_argument(
+        '-w',
+        '--window_size',
+        default=2,
+        type=int,
+        help='The size of the window for making a sequence of the input data.',
+    )
+
+    parser.add_argument(
+        '-t',
+        '--tfboard_log',
+        default='./log/lstm/',
+        help='The TensorBoard log path.',
+    )
+
+    parser.add_argument(
+        '--tfboard_freq',
+        default=10000,
+        help='The update freq of TensorBoard.',
+    )
+
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    combine(**vars(parse_args()))
+
+
+    features, labels = data_loader(data_path=args.in_file)
+
+    lstm = BranchLSTM(
+        x.shape[1],
+        units=args.units,
+        hidden_layers=args.hidden_layers,
+        window_size=args.window_size,
+    )
+
+    preds = lstm.online(features, labels)
+
+    np.savetxt(args.out_file, preds)

@@ -142,13 +142,12 @@ def parse_args():
 
 
 if __name__ == '__main__':
-    combine(**vars(parse_args()))
+    args = parse_args()
 
-
-    features, labels = data_loader(data_path=args.in_file)
+    features, labels = data_loader.get_data(data_path=args.in_file)
 
     lstm = BranchLSTM(
-        x.shape[1],
+        features.shape[1],
         units=args.units,
         hidden_layers=args.hidden_layers,
         window_size=args.window_size,

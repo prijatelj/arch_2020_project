@@ -5,6 +5,7 @@ class BranchPredict():
     total = 0
     hits = 0
     bht_list = {}
+    predictions = []
 
     def branch_predictor(self, pc_addr, curStatus, n, ght):
         self.total += 1
@@ -14,6 +15,7 @@ class BranchPredict():
                 self.bht_list[ght] = {}
                 if curStatus == 0:
                     self.hits += 1
+                    self.predictions.append(curStatus)
                     self.bht_list[ght][pc_addr] = 0
                 else:
                     self.bht_list[ght][pc_addr] = 1
@@ -23,12 +25,14 @@ class BranchPredict():
                     prevStatus = self.bht_list[ght][pc_addr]
                     if prevStatus == curStatus:
                         self.hits += 1
+                        self.predictions.append(curStatus)
                     else:
                         self.bht_list[ght][pc_addr] = curStatus
                 else:
                     # if pc_addr is not in history save the current branch status
                     if curStatus == 0:
                         self.hits += 1
+                        self.predictions.append(curStatus)
                         self.bht_list[ght][pc_addr] = 0
                     else:
                         self.bht_list[ght][pc_addr] = 1
@@ -38,6 +42,7 @@ class BranchPredict():
                 self.bht_list[ght] = {}
                 if curStatus == 0:
                     self.hits += 1
+                    self.predictions.append(curStatus)
                     self.bht_list[ght][pc_addr] = 0
                 elif curStatus == 1:
                     self.bht_list[ght][pc_addr] = 1
@@ -49,9 +54,11 @@ class BranchPredict():
                     if curStatus == 0:
                         if prevStatus == 0:
                             self.hits += 1
+                            self.predictions.append(curStatus)
                             newStatus = 0
                         elif prevStatus == 1:
                             self.hits += 1
+                            self.predictions.append(curStatus)
                             newStatus = 0
                         elif prevStatus == 2:
                             newStatus = 0
@@ -64,14 +71,17 @@ class BranchPredict():
                             newStatus = 3
                         elif prevStatus == 2:
                             self.hits += 1
+                            self.predictions.append(curStatus)
                             newStatus = 3
                         elif prevStatus == 3:
                             self.hits += 1
+                            self.predictions.append(curStatus)
                             newStatus = 3
                     self.bht_list[ght][pc_addr] = newStatus
                 else:
                     if curStatus == 0:
                         self.hits += 1
+                        self.predictions.append(curStatus)
                         self.bht_list[ght][pc_addr] = 0
                     elif curStatus == 1:
                         self.bht_list[ght][pc_addr] = 1
@@ -98,6 +108,7 @@ if __name__ == '__main__':
         ght = 'dummy'
 
     predict = BranchPredict()
+    newfilename = filename.split('/')[-1]
     try:
         with open(filename, 'r') as reader:
             for line in reader.readlines():
@@ -127,3 +138,9 @@ if __name__ == '__main__':
             print('Entries Used: ', entries_used)
     except:
         print('Error reading ', filename)
+    with open('results/python-'+newfilename[:-4]+f'-({m},{n}).dat', 'w') as output:
+        for pred in predict.predictions:
+            if pred == 1:
+                output.write('T\n')
+            else:
+                output.write('N\n')

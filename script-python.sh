@@ -6,6 +6,7 @@ do
         for n in {1..2}
         do
             (python3 baselines/python/branchsim.py -f $f -m $m -n $n -k 8)
+            (echo '------------------------------')
         done
     done
 done

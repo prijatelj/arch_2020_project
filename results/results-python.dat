@@ -1,0 +1,336 @@
+dataset:  gcc-10K.txt
+(m,n):  0 1
+LSB bits of PC used:  8
+Total:  10000
+Hits:  6942
+Misprediction rate:  30.58 %
+Entries Used:  255
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  0 2
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7126
+Misprediction rate:  28.74 %
+Entries Used:  255
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  1 1
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7275
+Misprediction rate:  27.25 %
+Entries Used:  489
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  1 2
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7460
+Misprediction rate:  25.4 %
+Entries Used:  489
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  2 1
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7539
+Misprediction rate:  24.61 %
+Entries Used:  821
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  2 2
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7618
+Misprediction rate:  23.82 %
+Entries Used:  821
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  3 1
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7880
+Misprediction rate:  21.2 %
+Entries Used:  1224
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  3 2
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7691
+Misprediction rate:  23.09 %
+Entries Used:  1224
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  4 1
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7988
+Misprediction rate:  20.12 %
+Entries Used:  1638
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  4 2
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7611
+Misprediction rate:  23.89 %
+Entries Used:  1638
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  5 1
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7968
+Misprediction rate:  20.32 %
+Entries Used:  2054
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  5 2
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7504
+Misprediction rate:  24.96 %
+Entries Used:  2054
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  6 1
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7971
+Misprediction rate:  20.29 %
+Entries Used:  2447
+------------------------------
+dataset:  gcc-10K.txt
+(m,n):  6 2
+LSB bits of PC used:  8
+Total:  10000
+Hits:  7385
+Misprediction rate:  26.15 %
+Entries Used:  2447
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  0 1
+LSB bits of PC used:  8
+Total:  56
+Hits:  26
+Misprediction rate:  53.5714 %
+Entries Used:  2
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  0 2
+LSB bits of PC used:  8
+Total:  56
+Hits:  37
+Misprediction rate:  33.9286 %
+Entries Used:  2
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  1 1
+LSB bits of PC used:  8
+Total:  56
+Hits:  25
+Misprediction rate:  55.3571 %
+Entries Used:  3
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  1 2
+LSB bits of PC used:  8
+Total:  56
+Hits:  36
+Misprediction rate:  35.7143 %
+Entries Used:  3
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  2 1
+LSB bits of PC used:  8
+Total:  56
+Hits:  26
+Misprediction rate:  53.5714 %
+Entries Used:  4
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  2 2
+LSB bits of PC used:  8
+Total:  56
+Hits:  37
+Misprediction rate:  33.9286 %
+Entries Used:  4
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  3 1
+LSB bits of PC used:  8
+Total:  56
+Hits:  50
+Misprediction rate:  10.7143 %
+Entries Used:  6
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  3 2
+LSB bits of PC used:  8
+Total:  56
+Hits:  47
+Misprediction rate:  16.0714 %
+Entries Used:  6
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  4 1
+LSB bits of PC used:  8
+Total:  56
+Hits:  49
+Misprediction rate:  12.5 %
+Entries Used:  8
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  4 2
+LSB bits of PC used:  8
+Total:  56
+Hits:  46
+Misprediction rate:  17.8571 %
+Entries Used:  8
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  5 1
+LSB bits of PC used:  8
+Total:  56
+Hits:  48
+Misprediction rate:  14.2857 %
+Entries Used:  9
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  5 2
+LSB bits of PC used:  8
+Total:  56
+Hits:  45
+Misprediction rate:  19.6429 %
+Entries Used:  9
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  6 1
+LSB bits of PC used:  8
+Total:  56
+Hits:  47
+Misprediction rate:  16.0714 %
+Entries Used:  10
+------------------------------
+dataset:  gcc-56.txt
+(m,n):  6 2
+LSB bits of PC used:  8
+Total:  56
+Hits:  44
+Misprediction rate:  21.4286 %
+Entries Used:  10
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  0 1
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  5856213
+Misprediction rate:  31.2276 %
+Entries Used:  256
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  0 2
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  6116425
+Misprediction rate:  28.1718 %
+Entries Used:  256
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  1 1
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  6242481
+Misprediction rate:  26.6915 %
+Entries Used:  512
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  1 2
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  6562044
+Misprediction rate:  22.9387 %
+Entries Used:  512
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  2 1
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  6632267
+Misprediction rate:  22.114 %
+Entries Used:  1019
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  2 2
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  6951165
+Misprediction rate:  18.369 %
+Entries Used:  1019
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  3 1
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  7062928
+Misprediction rate:  17.0565 %
+Entries Used:  1945
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  3 2
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  7318623
+Misprediction rate:  14.0538 %
+Entries Used:  1945
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  4 1
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  7384769
+Misprediction rate:  13.277 %
+Entries Used:  3427
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  4 2
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  7565536
+Misprediction rate:  11.1542 %
+Entries Used:  3427
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  5 1
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  7601709
+Misprediction rate:  10.7294 %
+Entries Used:  5459
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  5 2
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  7747068
+Misprediction rate:  9.0223 %
+Entries Used:  5459
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  6 1
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  7784246
+Misprediction rate:  8.5857 %
+Entries Used:  7966
+------------------------------
+dataset:  gcc-8M.txt
+(m,n):  6 2
+LSB bits of PC used:  8
+Total:  8515352
+Hits:  7893294
+Misprediction rate:  7.3051 %
+Entries Used:  7966
+------------------------------

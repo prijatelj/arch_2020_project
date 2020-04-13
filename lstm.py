@@ -18,13 +18,13 @@ def window_data(x, window_size, batch_size=1):
         windowed_x = np.append(np.zeros(window_size-1), x)
     else:
         windowed_x = np.vstack((
-            np.zeros((window_size - 1, x.shape[1], x.shape[1])),
+            np.zeros((max(1, window_size - 1), x.shape[1])),
             x,
         ))
 
     # format of windowed data?
     for i in range(window_size + 1, len(windowed_x) + 1):
-        yield windowed_x[i - window_size: i].flatten,
+        yield windowed_x[i - window_size: i]
 
 
 class BranchLSTM(object):
@@ -39,7 +39,7 @@ class BranchLSTM(object):
         tfboard_log='./log/lstm',
         update_freq=10000,
     ):
-        self.input_vector = Input(shape=input_shape * window_size)
+        self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
 
         x = self.input_vector
@@ -53,6 +53,7 @@ class BranchLSTM(object):
             optimizer='adam',
             loss='binary_crossentropy',
             batch_size=1,
+            metrics=['accuracy'],
         )
 
         self.callbacks = [TensorBoard(
@@ -70,13 +71,13 @@ class BranchLSTM(object):
         # TODO save history and repeat in order for multiple epochs?
 
         preds = []
-        for i in len(x):
-            win_x = window_data(x, self.window_size)
-            preds.append(self.predict(x, batch_size=1))
+        for win_x in window_data(x, self.window_size):
+            win_x = win_x[np.newaxis, ...]
+            preds.append(self.predict(win_x))
             self.fit(
-                x,
+                win_x,
                 y,
-                batch_size=1,
+                #batch_size=1,
                 shuffle=False,
                 epochs=1,
                 callbacks=self.callbacks,
@@ -103,7 +104,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        '-h',
+        '-l',
         '--hidden_layers',
         default=1, type=int,
         help='The number of hidden layers in the ANN.',
@@ -126,6 +127,15 @@ def parse_args():
     )
 
     parser.add_argument(
+        '-k',
+        '--lsb_bits',
+        default=8,
+        type=int,
+        choices=range(1,13),
+        help='Number of LSB bits of PC to consider.',
+    )
+
+    parser.add_argument(
         '-t',
         '--tfboard_log',
         default='./log/lstm/',
@@ -144,7 +154,10 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    features, labels = data_loader.get_data(data_path=args.in_file)
+    features, labels = data_loader.get_data(
+        data_path=args.in_file,
+        k=args.lsb_bits,
+    )
 
     lstm = BranchLSTM(
         features.shape[1],
@@ -155,4 +168,5 @@ if __name__ == '__main__':
 
     preds = lstm.online(features, labels)
 
-    np.savetxt(args.out_file, preds)
+    if isinstance(args.out_file, str):
+        np.savetxt(args.out_file, preds)

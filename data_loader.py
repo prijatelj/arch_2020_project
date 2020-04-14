@@ -21,4 +21,4 @@ def get_data(data_path, k=0):
             samples.append(sample)
             targets.append(target)
 
-    return np.asarray(samples).astype('int'), np.asarray(targets).astype('int')
+    return np.asarray(samples), np.asarray(targets).astype('int')

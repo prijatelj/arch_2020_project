@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -104,6 +105,20 @@ int main (int argc, char *argv[])
     int tCounter = 0;
     int iCount = 0;
 
+    // Create Prediction Vectors
+    vector<char> pred_alwaysT;
+    vector<char> pred_alwaysNT;
+    vector<char> pred_bimodal1bit8, pred_bimodal1bit16, pred_bimodal1bit32, pred_bimodal1bit128,
+        pred_bimodal1bit256, pred_bimodal1bit512, pred_bimodal1bit1024;
+    vector<char> pred_bimodal2bit8, pred_bimodal2bit16, pred_bimodal2bit32, pred_bimodal2bit128,
+        pred_bimodal2bit256, pred_bimodal2bit512, pred_bimodal2bit1024;
+    vector< vector<char> > pred_g;
+    for (int i = 0; i < 9; i++){
+        vector<char> wew;
+        pred_g.push_back(wew);
+    }
+    vector<char> pred_t;
+
     while (!fileIn.eof()) 
 	{
 		// Reading Trace File
@@ -113,6 +128,8 @@ int main (int argc, char *argv[])
         if (fileIn.fail()) break;
 
         char branchTaken;
+        int branchThis = (int) branchTaken;
+        int branchOther = (int) (branchTaken == 'T' ? 'F' : 'T');
         fileIn >> branchTaken;
         if (fileIn.fail()) break;
 
@@ -120,13 +137,22 @@ int main (int argc, char *argv[])
 
         int index = address % 1024;
 		// Tournament Predictor
-        tCounter += tournamentPred(gtable[8][index], table1024[index] % 4, gtable[8][index ^ globalReg & 1023] % 4, branchTaken);
+        int temp = tournamentPred(gtable[8][index], table1024[index] % 4, gtable[8][index ^ globalReg & 1023] % 4, branchTaken);
+        tCounter += temp;
+        int val = temp*branchThis + (1 - temp)*branchOther;
+        pred_t.push_back((char) val);
 
 		// Gshare Predictor (2 - 10 bits global register)
         for (int i = 2; i <= 10; i++) {
             int cutOff = 1 << i; //Use to obtain bits from global register
-            gCounter[i - 2] += predictor2bit(gtable[i - 2], (index) ^ (globalReg % cutOff), branchTaken);
+            temp = predictor2bit(gtable[i - 2], (index) ^ (globalReg % cutOff), branchTaken);
+            gCounter[i - 2] += temp;
+            val = temp*branchThis + (1 - temp)*branchOther;
+            pred_g[i - 2].push_back((char) val);
         }
+
+        pred_alwaysT.push_back('T');
+        pred_alwaysNT.push_back('N');
 
         globalReg = globalReg << 1;
         if (branchTaken == 'T') {
@@ -137,23 +163,78 @@ int main (int argc, char *argv[])
         }
         globalReg &= 1023; //Keep global register to 10 bits
 
+
 		//1 bit Bimodal Predictor with various table size
-        bimodal1bit8 += predictor1bit(table8, address % 8, branchTaken);
-        bimodal1bit16 += predictor1bit(table16, address % 16, branchTaken);
-        bimodal1bit32 += predictor1bit(table32, address % 32, branchTaken);
-        bimodal1bit128 += predictor1bit(table128, address % 128, branchTaken);
-        bimodal1bit256 += predictor1bit(table256, address % 256, branchTaken);
-        bimodal1bit512 += predictor1bit(table512, address % 512, branchTaken);
-        bimodal1bit1024 += predictor1bit(table1024, address % 1024, branchTaken);
+        temp = predictor1bit(table8, address % 8, branchTaken);
+        bimodal1bit8 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal1bit8.push_back((char) val);
+
+        temp = predictor1bit(table16, address % 16, branchTaken);
+        bimodal1bit16 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal1bit16.push_back((char) val);
+
+        temp = predictor1bit(table32, address % 32, branchTaken);
+        bimodal1bit32 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal1bit32.push_back((char) val);
+
+        temp = predictor1bit(table128, address % 128, branchTaken);
+        bimodal1bit128 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal1bit128.push_back((char) val);
+
+        temp = predictor1bit(table256, address % 256, branchTaken);
+        bimodal1bit256 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal1bit256.push_back((char) val);
+
+        temp = predictor1bit(table512, address % 512, branchTaken);
+        bimodal1bit512 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal1bit512.push_back((char) val);
+
+        temp = predictor1bit(table1024, address % 1024, branchTaken);
+        bimodal1bit1024 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal1bit1024.push_back((char) val);
 
 		//2 bit Bimodal Predictor with various table size
-        bimodal2bit8 += predictor2bit(table8, address % 8, branchTaken);
-        bimodal2bit16 += predictor2bit(table16, address % 16, branchTaken);
-        bimodal2bit32 += predictor2bit(table32, address % 32, branchTaken);
-        bimodal2bit128 += predictor2bit(table128, address % 128, branchTaken);
-        bimodal2bit256 += predictor2bit(table256, address % 256, branchTaken);
-        bimodal2bit512 += predictor2bit(table512, address % 512, branchTaken);
-        bimodal2bit1024 += predictor2bit(table1024, address % 1024, branchTaken);
+        temp = predictor2bit(table8, address % 8, branchTaken);
+        bimodal2bit8 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal2bit8.push_back((char) val);
+
+        temp = predictor2bit(table16, address % 16, branchTaken);
+        bimodal2bit16 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal2bit16.push_back((char) val);
+
+        temp = predictor2bit(table32, address % 32, branchTaken);
+        bimodal2bit32 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal2bit32.push_back((char) val);
+
+        temp = predictor2bit(table128, address % 128, branchTaken);
+        bimodal2bit128 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal2bit128.push_back((char) val);
+
+        temp = predictor2bit(table256, address % 256, branchTaken);
+        bimodal2bit256 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal2bit256.push_back((char) val);
+
+        temp = predictor2bit(table512, address % 512, branchTaken);
+        bimodal2bit512 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal2bit512.push_back((char) val);
+
+        temp = predictor2bit(table1024, address % 1024, branchTaken);
+        bimodal2bit1024 += temp;
+        val = temp*branchThis + (1 - temp)*branchOther;
+        pred_bimodal2bit1024.push_back((char) val);
 
         iCount++;	//Instruction Count
     }
@@ -191,6 +272,85 @@ int main (int argc, char *argv[])
     accurateG[10 - 2] = (int)((float)gCounter[10 - 2] * 100 / iCount + 0.5f);
     fileOut << accurateG[10 - 2] << endl;
     fileOut << accurateTour << endl;
+
+    /*
+    pred_g
+    pred_t
+    */
+    for (int i = 0; i < pred_alwaysT.size(); i++) {
+        fileOut << pred_alwaysT[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_alwaysNT.size(); i++) {
+        fileOut << pred_alwaysNT[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal1bit8.size(); i++) {
+        fileOut << pred_bimodal1bit8[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal1bit16.size(); i++) {
+        fileOut << pred_bimodal1bit16[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal1bit32.size(); i++) {
+        fileOut << pred_bimodal1bit32[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal1bit128.size(); i++) {
+        fileOut << pred_bimodal1bit128[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal1bit256.size(); i++) {
+        fileOut << pred_bimodal1bit256[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal1bit512.size(); i++) {
+        fileOut << pred_bimodal1bit512[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal1bit1024.size(); i++) {
+        fileOut << pred_bimodal1bit1024[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal2bit8.size(); i++) {
+        fileOut << pred_bimodal2bit8[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal2bit16.size(); i++) {
+        fileOut << pred_bimodal2bit16[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal2bit32.size(); i++) {
+        fileOut << pred_bimodal2bit32[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal2bit128.size(); i++) {
+        fileOut << pred_bimodal2bit128[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal2bit256.size(); i++) {
+        fileOut << pred_bimodal2bit256[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal2bit512.size(); i++) {
+        fileOut << pred_bimodal2bit512[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < pred_bimodal2bit1024.size(); i++) {
+        fileOut << pred_bimodal2bit1024[i] << ' ';
+    }
+    fileOut << endl;
+    for (int i = 0; i < 9; i++){
+        for (int j = 0; j < pred_g[i].size(); j++){
+            fileOut << pred_g[i][j] << ' ';
+        }
+        fileOut << endl;
+    }
+    for (int i = 0; i < pred_t.size(); i++) {
+        fileOut << pred_t[i] << ' ';
+    }
+    fileOut << endl;
 
     fileIn.close();
     fileOut.close();

@@ -2,7 +2,8 @@
 import argparse
 
 from keras import backend
-from keras.layers import LSTM, Activation, Input, Dense, CuDNNLSTM
+from keras.layers import LSTM, GRU, Activation, Input, Dense, CuDNNLSTM, \
+    CuDNNGRU
 from keras.models import Model
 from keras.callbacks.tensorboard_v1 import TensorBoard
 import numpy as np
@@ -30,7 +31,7 @@ def window_data(x, window_size, batch_size=1):
         yield windowed_x[i - window_size: i]
 
 
-class BranchLSTM(object):
+class BranchRNN(object):
 
     def __init__(
         self,
@@ -41,14 +42,20 @@ class BranchLSTM(object):
         window_size=1,
         tfboard_log='./log/lstm',
         update_freq=10000,
-        cudnn=True
+        cudnn=True,
+        gru=False,
     ):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
 
         x = self.input_vector
-        for i in range(hidden_layers):
-            x = CuDNNLSTM(units)(x) if cudnn else LSTM(units)(x)
+
+        if gru:
+            for i in range(hidden_layers):
+                x = CuDNNGRU(units)(x) if cudnn else GRU(units)(x)
+        else: # LSTM is default
+            for i in range(hidden_layers):
+                x = CuDNNLSTM(units)(x) if cudnn else LSTM(units)(x)
 
         self.output_vector = Dense(1, activation='sigmoid')(x)
 
@@ -204,6 +211,12 @@ def parse_args():
         help='Uses CuDNN version of LSTM or GRU',
     )
 
+    parser.add_argument(
+        '--gru',
+        action='store_true',
+        help='Uses GRU instead of the LSTM',
+    )
+
     add_hardware_args(parser)
 
     args = parser.parse_args()
@@ -226,12 +239,15 @@ if __name__ == '__main__':
         k=args.lsb_bits,
     )
 
-    lstm = BranchLSTM(
+    lstm = BranchRNN(
         features.shape[1],
         units=args.units,
         hidden_layers=args.hidden_layers,
         window_size=args.window_size,
+        tfboard_log=args.tfboard_log,
+        update_freq=args.tfboard_freq,
         cudnn=args.cudnn,
+        gru=args.gru,
     )
 
     preds = np.concatenate(lstm.online(features, labels))

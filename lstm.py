@@ -2,7 +2,7 @@
 import argparse
 
 from keras import backend
-from keras.layers import LSTM, Activation, Input, Dense
+from keras.layers import LSTM, Activation, Input, Dense, CuDNNLSTM
 from keras.models import Model
 from keras.callbacks.tensorboard_v1 import TensorBoard
 import numpy as np
@@ -41,13 +41,14 @@ class BranchLSTM(object):
         window_size=1,
         tfboard_log='./log/lstm',
         update_freq=10000,
+        cudnn=True
     ):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
 
         x = self.input_vector
         for i in range(hidden_layers):
-            x = LSTM(units)(x)
+            x = CuDNNLSTM(units)(x) if cudnn else LSTM(units)(x)
 
         self.output_vector = Dense(1, activation='sigmoid')(x)
 
@@ -60,7 +61,7 @@ class BranchLSTM(object):
 
         self.callbacks = [TensorBoard(
             tfboard_log,
-            update_freq=10000,
+            update_freq=update_freq,
         )]
 
     def predict(self, *args, **kwargs):
@@ -197,6 +198,12 @@ def parse_args():
         help='The update freq of TensorBoard.',
     )
 
+    parser.add_argument(
+        '--cudnn',
+        action='store_true',
+        help='Uses CuDNN version of LSTM or GRU',
+    )
+
     add_hardware_args(parser)
 
     args = parser.parse_args()
@@ -224,6 +231,7 @@ if __name__ == '__main__':
         units=args.units,
         hidden_layers=args.hidden_layers,
         window_size=args.window_size,
+        cudnn=args.cudnn,
     )
 
     preds = np.concatenate(lstm.online(features, labels))

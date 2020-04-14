@@ -198,7 +198,7 @@ def parse_args():
         help='The update freq of TensorBoard.',
     )
 
-    mle.add_argument(
+    parser.add_argument(
         '--cudnn',
         action='store_true',
         help='Uses CuDNN version of LSTM or GRU',

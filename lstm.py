@@ -1,11 +1,13 @@
 """Keras predictor for"""
 import argparse
 
+from keras import backend
 from keras.layers import LSTM, Activation, Input, Dense
 from keras.models import Model
 from keras.callbacks.tensorboard_v1 import TensorBoard
 import numpy as np
 from sklearn.metrics import accuracy_score
+import tensorflow as tf
 
 import data_loader
 
@@ -87,6 +89,18 @@ class BranchLSTM(object):
             )
 
         return preds
+
+
+def get_tf_config(cpu_cores=1, cpus=1, gpus=0, allow_soft_placement=True):
+    return tf.ConfigProto(
+        intra_op_parallelism_threads=cpu_cores,
+        inter_op_parallelism_threads=cpu_cores,
+        allow_soft_placement=allow_soft_placement,
+        device_count={
+            'CPU': cpus,
+            'GPU': gpus,
+        } if gpus >= 0 else {'CPU': cpus},
+    )
 
 
 def add_hardware_args(parser):
@@ -188,7 +202,7 @@ def parse_args():
     args = parser.parse_args()
 
     # Set the Hardware
-    keras.backend.set_session(tf.Session(config=get_tf_config(
+    backend.set_session(tf.Session(config=get_tf_config(
         args.cpu_cores,
         args.cpu,
         args.gpu,

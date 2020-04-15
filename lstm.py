@@ -32,6 +32,22 @@ def window_data(x, window_size, batch_size=1):
 
 
 class BranchRNN(object):
+    """Recurrent Neural Network branch predictor, either with a LSTM by default
+    of a GRU.
+
+    Attributes
+    ----------
+    batch_size
+    history_size : int
+        The maximum size of the history queue. Default is 0, meaning no
+        history.
+    feature_history : np.ndarray
+        The history queue where first entry is first feature of an event to
+        have occurred.
+    label_history : np.ndarray
+        The history queue where first entry is first label of an event to
+        have occurred.
+    """
 
     def __init__(
         self,
@@ -44,9 +60,19 @@ class BranchRNN(object):
         update_freq=10000,
         cudnn=True,
         gru=False,
+        batch_size=1,
+        history_size=0,
     ):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
+        if batch_size != 1:
+            raise NotImplementedError(
+                'Batch size greater than 1 is not implemented.'
+            )
+        self.batch_size = batch_size
+        self.history_size = history_size
+        self.feature_history = None
+        self.label_history = None
 
         x = self.input_vector
 
@@ -59,7 +85,10 @@ class BranchRNN(object):
 
         self.output_vector = Dense(1, activation='sigmoid')(x)
 
-        self.model = Model(inputs=self.input_vector, outputs=self.output_vector)
+        self.model = Model(
+            inputs=self.input_vector,
+            outputs=self.output_vector,
+        )
         self.model.compile(
             optimizer='adam',
             loss='binary_crossentropy',
@@ -77,24 +106,58 @@ class BranchRNN(object):
     def fit(self, *args, **kwargs):
         return self.model.fit(*args, **kwargs)
 
+    def update_history(self, features, labels):
+        if self.feature_history is None or self.feature_history is None:
+            # Initialize the history
+            self.feature_history = features
+            self.label_history = labels
+        else:
+            # adds the new data samples to end of queue and removes any old
+            # entries that does not fit within the history_size
+            self.feature_history = np.concatenate(
+                (self.feature_history, features),
+                axis=0,
+            )[:self.history_size + 1]
+            self.label_history = np.concatenate(
+                (self.label_history, labels),
+                axis=0,
+            )[:self.history_size + 1]
+
     def online(self, x, y):
         # TODO save history and repeat in order for multiple epochs?
-        y = y.reshape(-1,1)
+        y = y.reshape(-1, 1)
 
         print(f'y reshape shape = {y.shape}')
 
         preds = []
+        # NOTE this only works for batch size of 1. To add batching either
+        # hold off fitting until enough samples to make batch are obtained or
+        # store history of samples in queue and train over them per sample.
+        # NOTE If batch size for prediction is > 1, can possibly accelerate
+        # simulation.
         for i, win_x in enumerate(window_data(x, self.window_size)):
             win_x = win_x[np.newaxis, ...]
-            preds.append(self.predict(win_x, batch_size=1))
-            self.fit(
-                x=win_x,
-                y=y[i],
-                batch_size=1,
-                shuffle=False,
-                epochs=1,
-                callbacks=self.callbacks,
-            )
+            preds.append(self.predict(win_x, batch_size=self.batch_size))
+
+            if self.history_size > 0:
+                self.update_history(win_x, y[i])
+                self.fit(
+                    x=self.feature_history,
+                    y=self.label_history,
+                    batch_size=self.batch_size,
+                    shuffle=False,
+                    epochs=1,
+                    callbacks=self.callbacks,
+                )
+            else:
+                self.fit(
+                    x=win_x,
+                    y=y[i],
+                    batch_size=self.batch_size,
+                    shuffle=False,
+                    epochs=1,
+                    callbacks=self.callbacks,
+                )
 
         return preds
 
@@ -184,6 +247,14 @@ def parse_args():
     )
 
     parser.add_argument(
+        '-b',
+        '--batch_size',
+        default=1,
+        type=int,
+        help='The batch size of the recurrent neural network.',
+    )
+
+    parser.add_argument(
         '-k',
         '--lsb_bits',
         default=8,
@@ -248,6 +319,7 @@ if __name__ == '__main__':
         update_freq=args.tfboard_freq,
         cudnn=args.cudnn,
         gru=args.gru,
+        batch_size=args.batch_size,
     )
 
     preds = np.concatenate(lstm.online(features, labels))

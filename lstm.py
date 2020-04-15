@@ -40,7 +40,8 @@ class BranchRNN(object):
     batch_size
     history_size : int
         The maximum size of the history queue. Default is 0, meaning no
-        history.
+        history. 1 means that the history is the prior sample and is used in
+        training along with the current sample.
     feature_history : np.ndarray
         The history queue where first entry is first feature of an event to
         have occurred.
@@ -65,15 +66,17 @@ class BranchRNN(object):
     ):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
-        if batch_size != 1:
-            raise NotImplementedError(
-                'Batch size greater than 1 is not implemented.'
-            )
-        self.batch_size = batch_size
-        self.history_size = history_size
+        if batch_size != 1 and self.history_size <= 0:
+            raise NotImplementedError(' '.join([
+                'Batch size greater than 1 is not implemented without a',
+                'history of 1 or greater.'
+            ]))
+        self.batch_size = max(1, batch_size)
+        self.history_size = max(0, history_size)
         self.feature_history = None
         self.label_history = None
 
+        # Make the RNN model
         x = self.input_vector
 
         if gru:
@@ -255,6 +258,17 @@ def parse_args():
     )
 
     parser.add_argument(
+        '--history_size',
+        default=0,
+        type=int,
+        help=' '.join([
+            'The size of the queue of event feature and label pairs used in',
+            'training per epoch. Defaults to 0, meaning no history queue.',
+            'Each epoch is just the current sample if batch size 1.'
+        ]),
+    )
+
+    parser.add_argument(
         '-k',
         '--lsb_bits',
         default=8,
@@ -320,6 +334,7 @@ if __name__ == '__main__':
         cudnn=args.cudnn,
         gru=args.gru,
         batch_size=args.batch_size,
+        history_size=args.history_size,
     )
 
     preds = np.concatenate(lstm.online(features, labels))

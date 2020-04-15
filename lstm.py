@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score
 import tensorflow as tf
 
 import data_loader
+import io
 
 def window_data(x, window_size, batch_size=1):
     """Delievers the data in a window format, appending zeros to beginning of
@@ -341,4 +342,4 @@ if __name__ == '__main__':
     print(accuracy_score(labels, np.round(preds)))
 
     if isinstance(args.out_file, str):
-        np.savetxt(args.out_file, preds)
+        np.savetxt(io.create_filepath(args.out_file), preds)

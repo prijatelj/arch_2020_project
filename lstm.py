@@ -58,7 +58,7 @@ class BranchRNN(object):
         hidden_layers=1,
         output_shape=1,
         window_size=1,
-        tfboard_log='./log/lstm',
+        tfboard_log=None,
         update_freq=10000,
         cudnn=True,
         gru=False,
@@ -99,10 +99,11 @@ class BranchRNN(object):
             metrics=['accuracy'],
         )
 
-        self.callbacks = [TensorBoard(
-            tfboard_log,
-            update_freq=update_freq,
-        )]
+        if isinstance(tfboard_log, str):
+            self.callbacks = [TensorBoard(
+                tfboard_log,
+                update_freq=update_freq,
+            )]
 
     def predict(self, *args, **kwargs):
         return self.model.predict(*args, **kwargs)
@@ -313,7 +314,7 @@ def parse_args():
     parser.add_argument(
         '-t',
         '--tfboard_log',
-        default='./log/lstm/',
+        default=None,
         help='The TensorBoard log path.',
     )
 

@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score
 import tensorflow as tf
 
 import data_loader
-import io
+import exp_io
 
 def window_data(x, window_size, batch_size=1):
     """Delievers the data in a window format, appending zeros to beginning of
@@ -134,34 +134,66 @@ class BranchRNN(object):
         print(f'y reshape shape = {y.shape}')
 
         preds = []
-        # NOTE this only works for batch size of 1. To add batching either
-        # hold off fitting until enough samples to make batch are obtained or
-        # store history of samples in queue and train over them per sample.
-        # NOTE If batch size for prediction is > 1, can possibly accelerate
-        # simulation.
-        for i, win_x in enumerate(window_data(x, self.window_size)):
-            win_x = win_x[np.newaxis, ...]
-            preds.append(self.predict(win_x, batch_size=self.batch_size))
+        if self.history_size > 0 or self.batch_size == 1:
+            # Online where fits every single sample
+            for i, win_x in enumerate(window_data(x, self.window_size)):
+                win_x = win_x[np.newaxis, ...]
+                preds.append(self.predict(win_x, batch_size=self.batch_size))
 
-            if self.history_size > 0:
-                self.update_history(win_x, y[i])
-                self.fit(
-                    x=self.feature_history,
-                    y=self.label_history,
-                    batch_size=self.batch_size,
-                    shuffle=False,
-                    epochs=1,
-                    callbacks=self.callbacks,
-                )
-            else:
-                self.fit(
-                    x=win_x,
-                    y=y[i],
-                    batch_size=self.batch_size,
-                    shuffle=False,
-                    epochs=1,
-                    callbacks=self.callbacks,
-                )
+                if self.history_size > 0:
+                    self.update_history(win_x, y[i])
+                    self.fit(
+                        x=self.feature_history,
+                        y=self.label_history,
+                        batch_size=self.batch_size,
+                        shuffle=False,
+                        epochs=1,
+                        callbacks=self.callbacks,
+                    )
+                else:
+                    self.fit(
+                        x=win_x,
+                        y=y[i],
+                        batch_size=self.batch_size,
+                        shuffle=False,
+                        epochs=1,
+                        callbacks=self.callbacks,
+                    )
+        else: # Accelerated batch prediction simulation, no history atm
+            # Fits per batch sized intervals
+
+            # TODO perhaps implement usage of history here
+            # TODO perhaps break dependency on batch_size for a fit epoch's
+            # number of samples, where epoch is # samples before fitting
+
+            batch_features = []
+            for i, win_x in enumerate(window_data(x, self.window_size)):
+                win_x = win_x[np.newaxis, ...]
+                # NOTE do following for more accurate simulation
+                #preds.append(self.predict(win_x, batch_size=1))
+
+                batch_features.append(win_x)
+
+                if i % self.batch_size == 0:
+                    batch_features = np.concatenate(batch_features, axis=0),
+
+                    # NOTE do following for probably faster simulation
+                    preds += self.predict(
+                        batch_features,
+                        batch_size=self.batch_size,
+                    ).tolist()
+
+                    # fit every batch size
+                    self.fit(
+                        x=batch_features,
+                        y=y[max(0, i + 1 - self.batch_size):i + 1],
+                        batch_size=self.batch_size,
+                        shuffle=False,
+                        epochs=1,
+                        callbacks=self.callbacks,
+                    )
+
+                    batch_features = []
 
         return preds
 
@@ -342,4 +374,4 @@ if __name__ == '__main__':
     print(accuracy_score(labels, np.round(preds)))
 
     if isinstance(args.out_file, str):
-        np.savetxt(io.create_filepath(args.out_file), preds)
+        np.savetxt(exp_io.create_filepath(args.out_file), preds)

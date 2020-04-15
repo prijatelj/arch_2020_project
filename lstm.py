@@ -104,6 +104,8 @@ class BranchRNN(object):
                 tfboard_log,
                 update_freq=update_freq,
             )]
+        else:
+            self.callbacks = None
 
     def predict(self, *args, **kwargs):
         return self.model.predict(*args, **kwargs)

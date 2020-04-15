@@ -67,11 +67,11 @@ class BranchRNN(object):
     ):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
-        if batch_size != 1 and history_size <= 0:
-            raise NotImplementedError(' '.join([
-                'Batch size greater than 1 is not implemented without a',
-                'history of 1 or greater.'
-            ]))
+        #if batch_size != 1 and history_size <= 0:
+        #    raise NotImplementedError(' '.join([
+        #        'Batch size greater than 1 is not implemented without a',
+        #        'history of 1 or greater.'
+        #    ]))
         self.batch_size = max(1, batch_size)
         self.history_size = max(0, history_size)
         self.feature_history = None

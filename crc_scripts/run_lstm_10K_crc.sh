@@ -4,8 +4,8 @@
 #$ -N lstm_4w_4u
 #$ -q gpu
 #$ -l gpu_card=1
-#$ -o crc_logs/lstm/10K/
-#$ -e crc_logs/lstm/10K/
+#$ -o $HOME/Public/arch_2020_project/crc_scripts/crc_logs/lstm/10K/
+#$ -e $HOME/Public/arch_2020_project/crc_scripts/crc_logs/lstm/10K/
 
 BASE_PATH="$HOME/Public/arch_2020_project"
 

@@ -2,8 +2,8 @@
 
 #$ -pe smp 4
 #$ -N lstm_8M_8w8u
-#$ -o crc_logs/lstm/
-#$ -e crc_logs/lstm/
+#$ -o $HOME/Public/arch_2020_project/crc_scripts/crc_logs/lstm/8M/
+#$ -e $HOME/Public/arch_2020_project/crc_scripts/crc_logs/lstm/8M/
 
 BASE_PATH="$HOME/Public/arch_2020_project"
 

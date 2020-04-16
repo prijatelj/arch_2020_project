@@ -189,7 +189,7 @@ class BranchRNN(object):
                     # fit every batch size
                     self.fit(
                         x=batch_features,
-                        y=y[max(0, i + 1 - len(batch_features):i + 1],
+                        y=y[max(0, i + 1 - len(batch_features)):i + 1],
                         batch_size=self.batch_size,
                         shuffle=False,
                         epochs=1,

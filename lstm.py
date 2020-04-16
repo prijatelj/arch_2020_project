@@ -1,5 +1,6 @@
 """Keras predictor for"""
 import argparse
+import os
 
 from keras import backend
 from keras.layers import LSTM, GRU, Activation, Input, Dense, CuDNNLSTM, \
@@ -258,7 +259,7 @@ def parse_args():
 
     parser.add_argument(
         '-o',
-        '--out_file',
+        '--output_dir',
         default=None,
         help='The CSV output file path.',
     )
@@ -369,7 +370,7 @@ if __name__ == '__main__':
         k=args.lsb_bits,
     )
 
-    lstm = BranchRNN(
+    rnn = BranchRNN(
         features.shape[1],
         units=args.units,
         hidden_layers=args.hidden_layers,
@@ -383,8 +384,13 @@ if __name__ == '__main__':
         epochs=args.epochs,
     )
 
-    preds = np.concatenate(lstm.online(features, labels))
+    preds = np.concatenate(rnn.online(features, labels))
     print(accuracy_score(labels, np.round(preds)))
 
-    if isinstance(args.out_file, str):
-        np.savetxt(exp_io.create_filepath(args.out_file), preds)
+    if isinstance(args.output_dir, str):
+        used_rnn = 'gru' if args.gru else 'lstm'
+        out_file = f'pred_{used_rnn}_{args.window_size}w-{args.units}u-{args.batch_size}b-{args.epochs}e-{args.history}h.csv'
+        np.savetxt(
+            exp_io.create_filepath(os.path.join(args.output_dir, out_file)),
+            preds,
+        )

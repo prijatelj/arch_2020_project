@@ -1,8 +1,8 @@
 """Keras predictor for"""
 import argparse
+import logging
 import os
 
-from keras import backend
 from keras.layers import LSTM, GRU, Activation, Input, Dense, CuDNNLSTM, \
     CuDNNGRU
 from keras.models import Model
@@ -136,7 +136,7 @@ class BranchRNN(object):
     def online(self, x, y):
         y = y.reshape(-1, 1)
 
-        print(f'y reshape shape = {y.shape}')
+        logging.info('y reshape shape = %s', str(y.shape))
 
         preds = []
         if self.history_size > 0 or self.batch_size == 1:
@@ -203,48 +203,6 @@ class BranchRNN(object):
         return preds
 
 
-def get_tf_config(cpu_cores=1, cpus=1, gpus=0, allow_soft_placement=True):
-    return tf.ConfigProto(
-        intra_op_parallelism_threads=cpu_cores,
-        inter_op_parallelism_threads=cpu_cores,
-        allow_soft_placement=allow_soft_placement,
-        device_count={
-            'CPU': cpus,
-            'GPU': gpus,
-        } if gpus >= 0 else {'CPU': cpus},
-    )
-
-
-def add_hardware_args(parser):
-    """Adds the arguments detailing the hardware to be used."""
-    # TODO consider packaging as a dict/NestedNamespace
-    # TODO consider a boolean or something to indicate when to pass a
-    # tensorflow session or to use it as default
-
-    parser.add_argument(
-        '--cpu',
-        default=1,
-        type=int,
-        help='The number of available CPUs.',
-    )
-    parser.add_argument(
-        '--cpu_cores',
-        default=1,
-        type=int,
-        help='The number of available cores per CPUs.',
-    )
-    parser.add_argument(
-        '--gpu',
-        default=0,
-        type=int,
-        help='The number of available GPUs. Pass negative value if no CUDA.',
-    )
-    parser.add_argument(
-        '--which_gpu',
-        default=None,
-        type=int,
-        help='The number of available GPUs. Pass negative value if no CUDA.',
-    )
 
 
 def parse_args():
@@ -319,7 +277,7 @@ def parse_args():
         '--lsb_bits',
         default=8,
         type=int,
-        choices=range(1,13),
+        choices=range(1, 13),
         help='Number of LSB bits of PC to consider.',
     )
 
@@ -348,16 +306,13 @@ def parse_args():
         help='Uses GRU instead of the LSTM',
     )
 
-    add_hardware_args(parser)
+    exp_io.add_hardware_args(parser)
+    exp_io.add_logging_args(parser, 'INFO')
 
     args = parser.parse_args()
 
-    # Set the Hardware
-    backend.set_session(tf.Session(config=get_tf_config(
-        args.cpu_cores,
-        args.cpu,
-        args.gpu,
-    )))
+    exp_io.set_hardware(args)
+    exp_io.set_logging(args)
 
     return args
 
@@ -385,7 +340,7 @@ if __name__ == '__main__':
     )
 
     preds = np.round(np.concatenate(rnn.online(features, labels)))
-    print(accuracy_score(labels, preds))
+    logging.info('%s', str(accuracy_score(labels, preds)))
 
     if isinstance(args.output_dir, str):
         used_rnn = 'gru' if args.gru else 'lstm'

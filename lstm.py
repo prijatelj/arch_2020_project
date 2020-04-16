@@ -71,15 +71,12 @@ class BranchRNN(object):
     ):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
-        #if batch_size != 1 and history_size <= 0:
-        #    raise NotImplementedError(' '.join([
-        #        'Batch size greater than 1 is not implemented without a',
-        #        'history of 1 or greater.'
-        #    ]))
-        self.batch_size = max(1, batch_size)
-        self.epochs = max(1, epochs)
-        self.history_size = max(0, history_size)
-        if not batch_history and history_size <= batch_size:
+
+        if (
+            not batch_history
+            and history_size > 0
+            and history_size <= batch_size
+        ):
             raise ValueError(' '.join([
                 '`batch_history` is False and `history_size` is less than or',
                 'equal to `batch_size`. If want to use a history of samples,',
@@ -87,7 +84,12 @@ class BranchRNN(object):
                 'Otherwise, if you want to use a history of batches,',
                 '`batch_history` must be True.',
             ]))
+
+        self.batch_size = max(1, batch_size)
+        self.history_size = max(0, history_size)
         self.batch_history = batch_history
+        self.epochs = max(1, epochs)
+
         self.feature_history = None
         self.label_history = None
 

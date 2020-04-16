@@ -317,13 +317,13 @@ def parse_args():
     used_rnn = 'gru' if args.gru else 'lstm'
     args.out_file = '-'.join([
         f'pred_{used_rnn}_{args.window_size}w-{args.units}u',
-        '{args.batch_size}b-{args.epochs}e-{args.history_size}h.csv',
+        f'{args.batch_size}b-{args.epochs}e-{args.history_size}h',
     ])
 
-    args.log_file = os.path.join(args.log_file, args.out_file)
+    args.log_file = os.path.join(args.log_file, args.out_file + '.log')
     exp_io.set_logging(args.log_level, args.log_file)
 
-    args.out_file = os.path.join(args.output_dir, args.out_file)
+    args.out_file = os.path.join(args.output_dir, args.out_file + '.csv')
 
     return args
 

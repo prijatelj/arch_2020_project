@@ -19,6 +19,7 @@ def window_data(x, window_size, batch_size=1):
     window buffer and ending at last element of data.
     """
     assert window_size >= 1
+    # TODO perhaps should make batches here
 
     if len(x.shape) == 1:
         windowed_x = np.append(np.zeros(window_size), x)
@@ -312,7 +313,17 @@ def parse_args():
     args = parser.parse_args()
 
     exp_io.set_hardware(args)
-    exp_io.set_logging(args)
+
+    used_rnn = 'gru' if args.gru else 'lstm'
+    args.out_file = '-'.join([
+        f'pred_{used_rnn}_{args.window_size}w-{args.units}u',
+        '{args.batch_size}b-{args.epochs}e-{args.history_size}h.csv',
+    ])
+
+    args.log_file = os.path.join(args.log_file, args.out_file)
+    exp_io.set_logging(args.log_level, args.log_file)
+
+    args.out_file = os.path.join(args.output_dir, args.out_file)
 
     return args
 
@@ -343,9 +354,4 @@ if __name__ == '__main__':
     logging.info('%s', str(accuracy_score(labels, preds)))
 
     if isinstance(args.output_dir, str):
-        used_rnn = 'gru' if args.gru else 'lstm'
-        out_file = f'pred_{used_rnn}_{args.window_size}w-{args.units}u-{args.batch_size}b-{args.epochs}e-{args.history_size}h.csv'
-        np.savetxt(
-            exp_io.create_filepath(os.path.join(args.output_dir, out_file)),
-            preds,
-        )
+        np.savetxt(exp_io.create_filepath(args.out_file), preds)

@@ -148,15 +148,15 @@ def set_hardware(args):
         args.gpu,
     )))
 
-def set_logging(args):
+def set_logging(log_level, log_file=None):
     # Set logging configuration
-    numeric_level = getattr(logging, args.log_level.upper(), None)
+    numeric_level = getattr(logging, log_level.upper(), None)
     if not isinstance(numeric_level, int):
-        raise ValueError(f'Invalid log level: {args.log_level}')
-    if args.log_file is not None:
-        dir_part = args.log_file.rpartition(os.path.sep)[0]
+        raise ValueError(f'Invalid log level: {log_level}')
+    if log_file is not None:
+        dir_part = log_file.rpartition(os.path.sep)[0]
         os.makedirs(dir_part, exist_ok=True)
         # TODO add optional non-overwrite of existing logs using exp_io
-        logging.basicConfig(filename=args.log_file, level=numeric_level)
+        logging.basicConfig(filename=log_file, level=numeric_level)
     else:
         logging.basicConfig(level=numeric_level)

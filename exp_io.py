@@ -98,8 +98,8 @@ def add_logging_args(parser, default_log_level='WARNING'):
     parser.add_argument(
         '--log_filemode',
         default='w+',
-        choices=['w','w+','a']
-        help='The log file to be written to.',
+        choices=['w','w+','a'],
+        help='The filemode for writing to the log file.',
     )
 
 

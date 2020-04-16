@@ -67,6 +67,7 @@ class BranchRNN(object):
         batch_size=1,
         history_size=0,
         epochs=1,
+        batch_history=False,
     ):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
@@ -78,6 +79,7 @@ class BranchRNN(object):
         self.batch_size = max(1, batch_size)
         self.epochs = max(1, epochs)
         self.history_size = max(0, history_size)
+        self.batch_history = batch_history
         self.feature_history = None
         self.label_history = None
 
@@ -122,17 +124,26 @@ class BranchRNN(object):
             # Initialize the history
             self.feature_history = features
             self.label_history = labels
-        else:
+        elif self.batch_history: # History of batches
+            self.feature_history = np.concatenate(
+                (self.feature_history, features),
+                axis=0,
+            )[-self.history_size * self.batch_size]
+            self.label_history = np.concatenate(
+                (self.label_history, labels),
+                axis=0,
+            )[-self.history_size * self.batch_size]
+        else: # Sample history
             # adds the new data samples to end of queue and removes any old
             # entries that does not fit within the history_size
             self.feature_history = np.concatenate(
                 (self.feature_history, features),
                 axis=0,
-            )[:self.history_size + 1]
+            )[-self.history_size:]
             self.label_history = np.concatenate(
                 (self.label_history, labels),
                 axis=0,
-            )[:self.history_size + 1]
+            )[-self.history_size:]
 
     def online(self, x, y):
         y = y.reshape(-1, 1)
@@ -140,7 +151,10 @@ class BranchRNN(object):
         logging.info('y reshape shape = %s', str(y.shape))
 
         preds = []
-        if self.history_size > 0 or self.batch_size == 1:
+        if (
+            not self.batch_history
+            and (self.history_size > 0 or self.batch_size == 1)
+        ):
             # Online where fits every single sample
             for i, win_x in enumerate(window_data(x, self.window_size)):
                 win_x = win_x[np.newaxis, ...]
@@ -165,7 +179,7 @@ class BranchRNN(object):
                         epochs=self.epochs,
                         callbacks=self.callbacks,
                     )
-        else: # Accelerated batch prediction simulation, no history atm
+        else: # Accelerated batch prediction simulation
             # Fits per batch sized intervals
 
             # TODO perhaps implement usage of history here
@@ -190,14 +204,29 @@ class BranchRNN(object):
                     ).tolist()
 
                     # fit every batch size
-                    self.fit(
-                        x=batch_features,
-                        y=y[max(0, i + 1 - len(batch_features)):i + 1],
-                        batch_size=self.batch_size,
-                        shuffle=False,
-                        epochs=self.epochs,
-                        callbacks=self.callbacks,
-                    )
+                    if self.batch_history and self.history_size > 0:
+                        self.update_history(
+                            batch_features,
+                            y[max(0, i + 1 - len(batch_features)):i + 1],
+                        )
+                        # history of batches
+                        self.fit(
+                            x=self.feature_history,
+                            y=self.label_history,
+                            batch_size=self.batch_size,
+                            shuffle=False,
+                            epochs=self.epochs,
+                            callbacks=self.callbacks,
+                        )
+                    else: # single batch only
+                        self.fit(
+                            x=batch_features,
+                            y=y[max(0, i + 1 - len(batch_features)):i + 1],
+                            batch_size=self.batch_size,
+                            shuffle=False,
+                            epochs=self.epochs,
+                            callbacks=self.callbacks,
+                        )
 
                     batch_features = []
 
@@ -269,7 +298,22 @@ def parse_args():
         help=' '.join([
             'The size of the queue of event feature and label pairs used in',
             'training per epoch. Defaults to 0, meaning no history queue.',
-            'Each epoch is just the current sample if batch size 1.'
+            'Each epoch is just the current sample if batch size 1.',
+            '\n\nIf want to use as number of prior batches instead of number',
+            'of prior samples, pass `batch_history`.',
+        ]),
+    )
+
+    parser.add_argument(
+        '--batch_history',
+        action='store_true',
+        help=' '.join([
+            'By default, history is respective to samples meaning that the',
+            'history size is the number of prior samples to the current one',
+            'to be used in the next fitting session. When batch_history is',
+            'passed, history_size now counts as the number of prior batches.',
+            'This means that for every batch, the history_size number of',
+            'prior batches is also used for that train session.'
         ]),
     )
 

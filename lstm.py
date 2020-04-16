@@ -321,7 +321,11 @@ def parse_args():
     ])
 
     args.log_file = os.path.join(args.log_file, args.out_file + '.log')
-    exp_io.set_logging(args.log_level, args.log_file)
+    exp_io.set_logging(
+        args.log_level,
+        args.log_file,
+        filemode=args.log_filemode,
+    )
 
     args.out_file = os.path.join(args.output_dir, args.out_file + '.csv')
 

@@ -95,6 +95,13 @@ def add_logging_args(parser, default_log_level='WARNING'):
         help='The log file to be written to.',
     )
 
+    parser.add_argument(
+        '--log_filemode',
+        default='w+',
+        choices=['w','w+','a']
+        help='The log file to be written to.',
+    )
+
 
 def add_hardware_args(parser):
     """Adds the arguments detailing the hardware to be used."""
@@ -153,6 +160,7 @@ def set_logging(
     log_file=None,
     log_fmt='%(asctime)s: %(levelname)s: %(message)s',
     datefmt='%Y-%m-%d_%H-%M-%S'
+    filemode='w+',
 ):
     # Set logging configuration
     numeric_level = getattr(logging, log_level.upper(), None)
@@ -165,6 +173,7 @@ def set_logging(
 
         logging.basicConfig(
             filename=log_file,
+            filemode=filemode,
             level=numeric_level,
             format=log_fmt,
             datefmt=datefmt,

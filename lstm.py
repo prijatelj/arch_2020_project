@@ -64,6 +64,7 @@ class BranchRNN(object):
         gru=False,
         batch_size=1,
         history_size=0,
+        epochs=1,
     ):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
@@ -73,6 +74,7 @@ class BranchRNN(object):
         #        'history of 1 or greater.'
         #    ]))
         self.batch_size = max(1, batch_size)
+        self.epochs = max(1, batch_size)
         self.history_size = max(0, history_size)
         self.feature_history = None
         self.label_history = None
@@ -131,7 +133,6 @@ class BranchRNN(object):
             )[:self.history_size + 1]
 
     def online(self, x, y):
-        # TODO save history and repeat in order for multiple epochs?
         y = y.reshape(-1, 1)
 
         print(f'y reshape shape = {y.shape}')
@@ -150,7 +151,7 @@ class BranchRNN(object):
                         y=self.label_history,
                         batch_size=self.batch_size,
                         shuffle=False,
-                        epochs=1,
+                        epochs=self.epochs,
                         callbacks=self.callbacks,
                     )
                 else:
@@ -159,7 +160,7 @@ class BranchRNN(object):
                         y=y[i],
                         batch_size=self.batch_size,
                         shuffle=False,
-                        epochs=1,
+                        epochs=self.epochs,
                         callbacks=self.callbacks,
                     )
         else: # Accelerated batch prediction simulation, no history atm
@@ -192,7 +193,7 @@ class BranchRNN(object):
                         y=y[max(0, i + 1 - len(batch_features)):i + 1],
                         batch_size=self.batch_size,
                         shuffle=False,
-                        epochs=1,
+                        epochs=self.epochs,
                         callbacks=self.callbacks,
                     )
 
@@ -280,7 +281,7 @@ def parse_args():
     parser.add_argument(
         '-w',
         '--window_size',
-        default=2,
+        default=1,
         type=int,
         help='The size of the window for making a sequence of the input data.',
     )
@@ -291,6 +292,14 @@ def parse_args():
         default=1,
         type=int,
         help='The batch size of the recurrent neural network.',
+    )
+
+    parser.add_argument(
+        '-e',
+        '--epochs',
+        default=1,
+        type=int,
+        help='The number of epochs per fitting session.',
     )
 
     parser.add_argument(
@@ -371,6 +380,7 @@ if __name__ == '__main__':
         gru=args.gru,
         batch_size=args.batch_size,
         history_size=args.history_size,
+        epochs=args.epochs,
     )
 
     preds = np.concatenate(lstm.online(features, labels))

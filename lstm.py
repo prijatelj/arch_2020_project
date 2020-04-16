@@ -351,7 +351,7 @@ if __name__ == '__main__':
     )
 
     preds = np.round(np.concatenate(rnn.online(features, labels)))
-    logging.info('%s', str(accuracy_score(labels, preds)))
+    logging.info('accuracy = %s', str(accuracy_score(labels, preds)))
 
     if isinstance(args.output_dir, str):
         np.savetxt(exp_io.create_filepath(args.out_file), preds)

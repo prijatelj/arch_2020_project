@@ -178,6 +178,10 @@ def set_logging(
             format=log_fmt,
             datefmt=datefmt,
         )
+
+        if filemode == 'w+':
+            # Adding some form of line break for ease of searching logs.
+            logging.info('Start of new logging session.')
     else:
         logging.basicConfig(
             level=numeric_level,

@@ -384,8 +384,8 @@ if __name__ == '__main__':
         epochs=args.epochs,
     )
 
-    preds = np.concatenate(rnn.online(features, labels))
-    print(accuracy_score(labels, np.round(preds)))
+    preds = np.round(np.concatenate(rnn.online(features, labels)))
+    print(accuracy_score(labels, preds))
 
     if isinstance(args.output_dir, str):
         used_rnn = 'gru' if args.gru else 'lstm'

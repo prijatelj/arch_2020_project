@@ -159,7 +159,7 @@ def set_logging(
     log_level,
     log_file=None,
     log_fmt='%(asctime)s: %(levelname)s: %(message)s',
-    datefmt='%Y-%m-%d_%H-%M-%S'
+    datefmt='%Y-%m-%d_%H-%M-%S',
     filemode='w+',
 ):
     # Set logging configuration

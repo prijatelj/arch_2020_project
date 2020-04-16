@@ -344,7 +344,7 @@ if __name__ == '__main__':
 
     if isinstance(args.output_dir, str):
         used_rnn = 'gru' if args.gru else 'lstm'
-        out_file = f'pred_{used_rnn}_{args.window_size}w-{args.units}u-{args.batch_size}b-{args.epochs}e-{args.history}h.csv'
+        out_file = f'pred_{used_rnn}_{args.window_size}w-{args.units}u-{args.batch_size}b-{args.epochs}e-{args.history_size}h.csv'
         np.savetxt(
             exp_io.create_filepath(os.path.join(args.output_dir, out_file)),
             preds,

@@ -72,6 +72,11 @@ class BranchRNN(object):
         self.input_vector = Input(shape=[window_size, input_shape])
         self.window_size = window_size
 
+        if batch_history and history_size <= 0:
+            raise ValueError(' '.join([
+                '`batch_history` cannot be True when `history_size` is less',
+                'than or equal to 0.',
+            ]))
         if (
             not batch_history
             and history_size > 0

@@ -138,11 +138,11 @@ class BranchRNN(object):
             self.feature_history = np.concatenate(
                 (self.feature_history, features),
                 axis=0,
-            )[-self.history_size * self.batch_size]
+            )[-self.history_size * self.batch_size:]
             self.label_history = np.concatenate(
                 (self.label_history, labels),
                 axis=0,
-            )[-self.history_size * self.batch_size]
+            )[-self.history_size * self.batch_size:]
         else: # Sample history
             # adds the new data samples to end of queue and removes any old
             # entries that does not fit within the history_size
@@ -372,6 +372,7 @@ def parse_args():
     args.out_file = '-'.join([
         f'pred_{used_rnn}_{args.window_size}w-{args.units}u',
         f'{args.batch_size}b-{args.epochs}e-{args.history_size}h',
+        f'{args.batch_history}_bh',
     ])
 
     args.log_file = os.path.join(args.log_file, args.out_file + '.log')

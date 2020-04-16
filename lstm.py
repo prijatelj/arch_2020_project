@@ -74,7 +74,7 @@ class BranchRNN(object):
         #        'history of 1 or greater.'
         #    ]))
         self.batch_size = max(1, batch_size)
-        self.epochs = max(1, batch_size)
+        self.epochs = max(1, epochs)
         self.history_size = max(0, history_size)
         self.feature_history = None
         self.label_history = None

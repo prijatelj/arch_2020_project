@@ -79,6 +79,14 @@ class BranchRNN(object):
         self.batch_size = max(1, batch_size)
         self.epochs = max(1, epochs)
         self.history_size = max(0, history_size)
+        if not batch_history and history_size <= batch_size:
+            raise ValueError(' '.join([
+                '`batch_history` is False and `history_size` is less than or',
+                'equal to `batch_size`. If want to use a history of samples,',
+                'then `batch_size` must be less than `history_size`.',
+                'Otherwise, if you want to use a history of batches,',
+                '`batch_history` must be True.',
+            ]))
         self.batch_history = batch_history
         self.feature_history = None
         self.label_history = None

@@ -177,7 +177,7 @@ class BranchRNN(object):
 
                 batch_features.append(win_x)
 
-                if i % self.batch_size == 0:
+                if i % self.batch_size == 0 or i == len(x):
                     batch_features = np.concatenate(batch_features, axis=0)
 
                     # NOTE do following for probably faster simulation

@@ -151,7 +151,7 @@ def set_hardware(args):
 def set_logging(
     log_level,
     log_file=None,
-    log_fmt='%(levelname)s: %(asctime)s %(message)s',
+    log_fmt='%(levelname)s:%(asctime)s:%(message)s',
     datefmt='%m/%d/%Y %I:%M:%S %p',
 ):
     # Set logging configuration

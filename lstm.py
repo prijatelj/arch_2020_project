@@ -406,6 +406,7 @@ if __name__ == '__main__':
         batch_size=args.batch_size,
         history_size=args.history_size,
         epochs=args.epochs,
+        batch_history=args.batch_history,
     )
 
     preds = np.round(np.concatenate(rnn.online(features, labels)))

@@ -1,5 +1,5 @@
 import argparse
-from torch.nn import Linear, Module, LSTM
+from torch.nn import Linear, Module, LSTM, GRU
 from torch.nn.functional import cross_entropy
 from torch import optim
 from tqdm import tqdm
@@ -11,7 +11,7 @@ from data_loader import get_data
 
 
 class myLSTM(Module):
-    def __init__(self, input_size=12, multi_layer=True):
+    def __init__(self, input_size=12, multi_layer=True, mode='GRU'):
         super(myLSTM, self).__init__()
         self.input_dim = input_size
         self.hidden_dim = input_size
@@ -19,7 +19,10 @@ class myLSTM(Module):
         self.num_layers = 1
 
         self.multi_layer = multi_layer
-        self.lstm = LSTM(input_size, input_size)
+        if mode == 'GRU':
+            self.lstm = GRU(input_size, input_size)
+        elif mode == 'LSTM':
+            self.lstm = LSTM(input_size, input_size)
         self.output = Linear(input_size, 2)
 
     def init_hidden(self):
@@ -34,8 +37,8 @@ class myLSTM(Module):
 
 
 class Model():
-    def __init__(self, input_size, multi_layer, device):
-        self.model = myLSTM(input_size, multi_layer)
+    def __init__(self, input_size, multi_layer, device, mode):
+        self.model = myLSTM(input_size, multi_layer, mode)
         self.optimizer = optim.SGD(self.model.parameters(), lr=0.1, momentum=0.5)
         self.model.to(device)
         self.model.train()
@@ -55,6 +58,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', '-bs', type=int, help="Batch size.", default=1)
     parser.add_argument('--prefix', '-p', help='Prefix to save the model.', type=str)
     parser.add_argument('--output', '-o', help='Output file for the predictions.', type=str)
+    parser.add_argument('--mode', help='RNN mode [GRU, LSTM]', type=str, default='GRU')
 
     args = parser.parse_args()
 
@@ -96,7 +100,7 @@ if __name__ == '__main__':
         labels = torch.tensor(data[1][idx:idx + batch_size], dtype=torch.long, device=device)
 
         if addresses not in myLSTMs:
-            myLSTMs[addresses] = Model(global_history, args.multi_layer, device)
+            myLSTMs[addresses] = Model(global_history, args.multi_layer, device, args.mode)
             myLSTMs[addresses].model.hidden = myLSTMs[addresses].model.init_hidden()
 
         history_input = np.zeros(shape=(1, 1, global_history))

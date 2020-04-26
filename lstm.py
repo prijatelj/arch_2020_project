@@ -8,6 +8,7 @@ from keras.layers import LSTM, GRU, Activation, Input, Dense, CuDNNLSTM, \
 from keras.models import Model
 from keras.callbacks.tensorboard_v1 import TensorBoard
 import numpy as np
+from scipy.ndimage import shift
 from sklearn.metrics import accuracy_score
 import tensorflow as tf
 
@@ -401,7 +402,8 @@ if __name__ == '__main__':
     )
 
     rnn = BranchRNN(
-        features.shape[1],
+        #features.shape[1],
+        1,
         units=args.units,
         hidden_layers=args.hidden_layers,
         window_size=args.window_size,
@@ -415,7 +417,9 @@ if __name__ == '__main__':
         batch_history=args.batch_history,
     )
 
-    preds = np.round(np.concatenate(rnn.online(features, labels)))
+    labels_as_input = shift(labels, 1, cval=0)
+
+    preds = np.round(np.concatenate(rnn.online(labels_as_input, labels)))
     logging.info('accuracy = %s', str(accuracy_score(labels, preds)))
 
     if isinstance(args.output_dir, str):

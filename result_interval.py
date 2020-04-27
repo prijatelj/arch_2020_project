@@ -3,7 +3,7 @@
 
 import os
 import numpy as np
-from sklearn.metrics import accuracy_score, f1_score, mutual_info_score, confusion_matrix
+from sklearn.metrics import accuracy_score, f1_score, mutual_info_score, confusion_matrix, matthews_corrcoef
 
 import data_loader
 import result_data_loader
@@ -40,7 +40,7 @@ if __name__ == '__main__':
   for model in ["perceptron", "slp", "mlp", "lstm", "gru"]:
     for file_size in ["56", "10K"]:
     # for file_size in ["8M"]:
-      for metric in [accuracy_score, f1_score, mutual_info_score, confusion_matrix]:
+      for metric in [accuracy_score, f1_score, mutual_info_score, confusion_matrix, matthews_corrcoef]:
         trace_filename = "gcc-" + file_size + ".txt"
         trace_filepath = trace_dir_path + trace_filename
         results_filepath = results_dir_path + model_result_filename_prefix[model] + trace_filename
@@ -54,4 +54,37 @@ if __name__ == '__main__':
         output_file.write(str(metric_output))
         output_file.write("\n\n\n")
 
-  output_file.close()
+  # output_file.close()
+
+  # (m,n) baseline
+  output_file_mn = open(output_dir_path + "metrics_interval_mn.txt", "w")
+
+  for file_size in ["56", "10K"]:
+  # for file_size in ["8M"]:
+    for metric in [accuracy_score, f1_score, mutual_info_score, confusion_matrix, matthews_corrcoef]:
+      trace_filename = "gcc-" + file_size + ".txt"
+      trace_filepath = trace_dir_path + trace_filename
+
+      results_filepath = ""
+      if file_size == "56":
+        results_filepath = results_dir_path + "python-gcc-56-(1,1).dat"
+      elif file_size == "10K":
+        results_filepath = results_dir_path + "python-gcc-10K-(0,1).dat"
+      else:
+        results_filepath = results_dir_path + "python-gcc-8M-(0,1).dat"
+
+      trace_features, trace_labels = data_loader.get_data(data_path=trace_filepath, k=8)
+      result_labels = result_data_loader.get_data(data_path=results_filepath)
+
+      metric_output = interval_result(trace_labels, result_labels, metric, 4)
+
+      output_file_mn.write("***> " + file_size + " " + metric.__name__ + ":\n")
+      output_file_mn.write(str(metric_output))
+      output_file_mn.write("\n\n\n")
+
+  output_file_mn.close()
+
+
+
+
+

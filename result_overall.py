@@ -1,4 +1,4 @@
-# Computes the interval results for:
+# Computes the overall results for:
 # MODEL x FILE SIZE x METRIC
 
 import os
@@ -8,20 +8,8 @@ from sklearn.metrics import accuracy_score, f1_score, mutual_info_score, confusi
 import data_loader
 import result_data_loader
 
-# returns cumulative metric score per interval
-# |abcd|efg|
-#  20%  30%
-# target and pred: numpy arrays consisting of 0/1
-# num_intervals: number of desired intervals, not size per interval
-def interval_result(target, pred, metric_func, num_intervals):
-  starting_indices = np.floor(np.linspace(0, target.size-1, num_intervals+1)[:-1]).astype(int)
-  interval_size = starting_indices[1] - starting_indices[0]
-
-  metrics_at_intervals = []
-  for idx_start in starting_indices:
-    metrics_at_intervals.append( metric_func(target[0:idx_start+interval_size], pred[0:idx_start+interval_size]) )
-
-  return np.asarray(metrics_at_intervals)
+def overall_result(target, pred, metric_func):
+  return metric_func(target[0:target.size], pred[0:pred.size])
 
 if __name__ == '__main__':
   program_dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -35,8 +23,8 @@ if __name__ == '__main__':
                                   "gru": "GRU-pytorch-"}
 
   for model in ["perceptron", "slp", "mlp", "lstm", "gru"]:
-    # for file_size in ["56", "10K", "8M"]:
-    for file_size in ["56", "10K"]:
+    for file_size in ["56", "10K", "8M"]:
+    # for file_size in ["56", "10K"]:
       for metric in [accuracy_score, f1_score, mutual_info_score, confusion_matrix]:
         trace_filename = "gcc-" + file_size + ".txt"
         trace_filepath = trace_dir_path + trace_filename
@@ -46,7 +34,7 @@ if __name__ == '__main__':
         result_labels = result_data_loader.get_data(data_path=results_filepath)
 
         print("***> " + model + " " + file_size + " " + metric.__name__)
-        print(interval_result(trace_labels, result_labels, metric, 4))
+        print(overall_result(trace_labels, result_labels, metric))
         print()
         print()
 

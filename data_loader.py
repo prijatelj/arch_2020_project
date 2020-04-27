@@ -1,3 +1,6 @@
+# Loads trace file where each line is in this format:
+# <address> <prediction. either T/NT>
+
 import numpy as np
 
 

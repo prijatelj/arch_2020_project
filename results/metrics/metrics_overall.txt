@@ -1,0 +1,170 @@
+***> perceptron 56 accuracy_score:
+0.6607142857142857
+
+
+***> perceptron 56 f1_score:
+0.7466666666666667
+
+
+***> perceptron 56 mutual_info_score:
+0.032409661825467034
+
+
+***> perceptron 56 confusion_matrix:
+[[ 9  6]
+ [13 28]]
+
+
+***> perceptron 10K accuracy_score:
+0.5529
+
+
+***> perceptron 10K f1_score:
+0.598401149735022
+
+
+***> perceptron 10K mutual_info_score:
+0.00450403208494643
+
+
+***> perceptron 10K confusion_matrix:
+[[2198 2364]
+ [2107 3331]]
+
+
+***> slp 56 accuracy_score:
+0.8928571428571429
+
+
+***> slp 56 f1_score:
+0.923076923076923
+
+
+***> slp 56 mutual_info_score:
+0.30347959855292905
+
+
+***> slp 56 confusion_matrix:
+[[14  1]
+ [ 5 36]]
+
+
+***> slp 10K accuracy_score:
+0.8081
+
+
+***> slp 10K f1_score:
+0.8233453005615392
+
+
+***> slp 10K mutual_info_score:
+0.20134358174305322
+
+
+***> slp 10K confusion_matrix:
+[[3609  953]
+ [ 966 4472]]
+
+
+***> mlp 56 accuracy_score:
+0.9107142857142857
+
+
+***> mlp 56 f1_score:
+0.9382716049382716
+
+
+***> mlp 56 mutual_info_score:
+0.30143993130520585
+
+
+***> mlp 56 confusion_matrix:
+[[13  2]
+ [ 3 38]]
+
+
+***> mlp 10K accuracy_score:
+0.8062
+
+
+***> mlp 10K f1_score:
+0.8214154072981938
+
+
+***> mlp 10K mutual_info_score:
+0.19871249219460604
+
+
+***> mlp 10K confusion_matrix:
+[[3605  957]
+ [ 981 4457]]
+
+
+***> lstm 56 accuracy_score:
+0.7678571428571429
+
+
+***> lstm 56 f1_score:
+0.860215053763441
+
+
+***> lstm 56 mutual_info_score:
+0.039330909768975186
+
+
+***> lstm 56 confusion_matrix:
+[[ 3 12]
+ [ 1 40]]
+
+
+***> lstm 10K accuracy_score:
+0.7499
+
+
+***> lstm 10K f1_score:
+0.7688753349967656
+
+
+***> lstm 10K mutual_info_score:
+0.12848745119706792
+
+
+***> lstm 10K confusion_matrix:
+[[3339 1223]
+ [1278 4160]]
+
+
+***> gru 56 accuracy_score:
+0.875
+
+
+***> gru 56 f1_score:
+0.9156626506024096
+
+
+***> gru 56 mutual_info_score:
+0.21535172728771707
+
+
+***> gru 56 confusion_matrix:
+[[11  4]
+ [ 3 38]]
+
+
+***> gru 10K accuracy_score:
+0.7892
+
+
+***> gru 10K f1_score:
+0.8068889703187981
+
+
+***> gru 10K mutual_info_score:
+0.17507984547700337
+
+
+***> gru 10K confusion_matrix:
+[[3488 1074]
+ [1034 4404]]
+
+

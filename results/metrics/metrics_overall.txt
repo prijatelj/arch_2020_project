@@ -32,72 +32,123 @@
  [2107 3331]]
 
 
-***> slp 56 accuracy_score:
+***> perceptron 8M accuracy_score:
+0.5407736521050451
+
+
+***> perceptron 8M f1_score:
+0.5701915262594335
+
+
+***> perceptron 8M mutual_info_score:
+0.0029991116821627695
+
+
+***> perceptron 8M confusion_matrix:
+[[2011026 2013324]
+ [1897150 2593852]]
+
+
+***> nn 56 accuracy_score:
 0.8928571428571429
 
 
-***> slp 56 f1_score:
+***> nn 56 f1_score:
 0.923076923076923
 
 
-***> slp 56 mutual_info_score:
+***> nn 56 mutual_info_score:
 0.30347959855292905
 
 
-***> slp 56 confusion_matrix:
+***> nn 56 confusion_matrix:
 [[14  1]
  [ 5 36]]
 
 
-***> slp 10K accuracy_score:
+***> nn 10K accuracy_score:
 0.8081
 
 
-***> slp 10K f1_score:
+***> nn 10K f1_score:
 0.8233453005615392
 
 
-***> slp 10K mutual_info_score:
+***> nn 10K mutual_info_score:
 0.20134358174305322
 
 
-***> slp 10K confusion_matrix:
+***> nn 10K confusion_matrix:
 [[3609  953]
  [ 966 4472]]
 
 
-***> mlp 56 accuracy_score:
+***> nn 8M accuracy_score:
+0.8860351280839595
+
+
+***> nn 8M f1_score:
+0.8920939991560557
+
+
+***> nn 8M mutual_info_score:
+0.337053841069489
+
+
+***> nn 8M confusion_matrix:
+[[3533384  490966]
+ [ 479485 4011517]]
+
+
+***> ml-nn 56 accuracy_score:
 0.9107142857142857
 
 
-***> mlp 56 f1_score:
+***> ml-nn 56 f1_score:
 0.9382716049382716
 
 
-***> mlp 56 mutual_info_score:
+***> ml-nn 56 mutual_info_score:
 0.30143993130520585
 
 
-***> mlp 56 confusion_matrix:
+***> ml-nn 56 confusion_matrix:
 [[13  2]
  [ 3 38]]
 
 
-***> mlp 10K accuracy_score:
+***> ml-nn 10K accuracy_score:
 0.8062
 
 
-***> mlp 10K f1_score:
+***> ml-nn 10K f1_score:
 0.8214154072981938
 
 
-***> mlp 10K mutual_info_score:
+***> ml-nn 10K mutual_info_score:
 0.19871249219460604
 
 
-***> mlp 10K confusion_matrix:
+***> ml-nn 10K confusion_matrix:
 [[3605  957]
  [ 981 4457]]
+
+
+***> ml-nn 8M accuracy_score:
+0.8731474635458405
+
+
+***> ml-nn 8M f1_score:
+0.8798900969379699
+
+
+***> ml-nn 8M mutual_info_score:
+0.3114458321184793
+
+
+***> ml-nn 8M confusion_matrix:
+[[3478565  545785]
+ [ 534409 3956593]]
 
 
 ***> lstm 56 accuracy_score:
@@ -134,6 +185,23 @@
  [1278 4160]]
 
 
+***> lstm 8M accuracy_score:
+0.928765246580529
+
+
+***> lstm 8M f1_score:
+0.932638847168365
+
+
+***> lstm 8M mutual_info_score:
+0.4348426619356215
+
+
+***> lstm 8M confusion_matrix:
+[[3709544  314806]
+ [ 291783 4199219]]
+
+
 ***> gru 56 accuracy_score:
 0.875
 
@@ -166,5 +234,22 @@
 ***> gru 10K confusion_matrix:
 [[3488 1074]
  [1034 4404]]
+
+
+***> gru 8M accuracy_score:
+0.928693728691427
+
+
+***> gru 8M f1_score:
+0.9325667626786454
+
+
+***> gru 8M mutual_info_score:
+0.43466060594311073
+
+
+***> gru 8M confusion_matrix:
+[[3709537  314813]
+ [ 292385 4198617]]
 
 

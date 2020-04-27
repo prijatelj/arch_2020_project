@@ -15,6 +15,10 @@
  [13 28]]
 
 
+***> perceptron 56 matthews_corrcoef:
+0.25654342673912356
+
+
 ***> perceptron 10K accuracy_score:
 0.5529
 
@@ -30,6 +34,10 @@
 ***> perceptron 10K confusion_matrix:
 [[2198 2364]
  [2107 3331]]
+
+
+***> perceptron 10K matthews_corrcoef:
+0.09490621665479698
 
 
 ***> perceptron 8M accuracy_score:
@@ -49,6 +57,10 @@
  [1897150 2593852]]
 
 
+***> perceptron 8M matthews_corrcoef:
+0.07742608865474551
+
+
 ***> nn 56 accuracy_score:
 0.8928571428571429
 
@@ -64,6 +76,10 @@
 ***> nn 56 confusion_matrix:
 [[14  1]
  [ 5 36]]
+
+
+***> nn 56 matthews_corrcoef:
+0.7589013497163833
 
 
 ***> nn 10K accuracy_score:
@@ -83,6 +99,10 @@
  [ 966 4472]]
 
 
+***> nn 10K matthews_corrcoef:
+0.6133228908316752
+
+
 ***> nn 8M accuracy_score:
 0.8860351280839595
 
@@ -98,6 +118,10 @@
 ***> nn 8M confusion_matrix:
 [[3533384  490966]
  [ 479485 4011517]]
+
+
+***> nn 8M matthews_corrcoef:
+0.7713526125408725
 
 
 ***> ml-nn 56 accuracy_score:
@@ -117,6 +141,10 @@
  [ 3 38]]
 
 
+***> ml-nn 56 matthews_corrcoef:
+0.7778435899372728
+
+
 ***> ml-nn 10K accuracy_score:
 0.8062
 
@@ -132,6 +160,10 @@
 ***> ml-nn 10K confusion_matrix:
 [[3605  957]
  [ 981 4457]]
+
+
+***> ml-nn 10K matthews_corrcoef:
+0.6095752133582454
 
 
 ***> ml-nn 8M accuracy_score:
@@ -151,6 +183,10 @@
  [ 534409 3956593]]
 
 
+***> ml-nn 8M matthews_corrcoef:
+0.7454960107036107
+
+
 ***> lstm 56 accuracy_score:
 0.7678571428571429
 
@@ -166,6 +202,10 @@
 ***> lstm 56 confusion_matrix:
 [[ 3 12]
  [ 1 40]]
+
+
+***> lstm 56 matthews_corrcoef:
+0.3019635553224335
 
 
 ***> lstm 10K accuracy_score:
@@ -185,6 +225,10 @@
  [1278 4160]]
 
 
+***> lstm 10K matthews_corrcoef:
+0.4964513471082
+
+
 ***> lstm 8M accuracy_score:
 0.928765246580529
 
@@ -200,6 +244,10 @@
 ***> lstm 8M confusion_matrix:
 [[3709544  314806]
  [ 291783 4199219]]
+
+
+***> lstm 8M matthews_corrcoef:
+0.857071470940699
 
 
 ***> gru 56 accuracy_score:
@@ -219,6 +267,10 @@
  [ 3 38]]
 
 
+***> gru 56 matthews_corrcoef:
+0.6751492859105923
+
+
 ***> gru 10K accuracy_score:
 0.7892
 
@@ -236,6 +288,10 @@
  [1034 4404]]
 
 
+***> gru 10K matthews_corrcoef:
+0.5748581753997722
+
+
 ***> gru 8M accuracy_score:
 0.928693728691427
 
@@ -251,5 +307,9 @@
 ***> gru 8M confusion_matrix:
 [[3709537  314813]
  [ 292385 4198617]]
+
+
+***> gru 8M matthews_corrcoef:
+0.8569284153355121
 
 

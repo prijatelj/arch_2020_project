@@ -62,11 +62,10 @@ if __name__ == '__main__':
         result_labels = result_data_loader.get_data(data_path=results_filepath)
 
         for metric in [accuracy_score, f1_score, mutual_info_score, confusion_matrix, matthews_corrcoef]:
-          metric_output = overall_result(trace_labels, result_labels, metric)
+            metric_output = overall_result(trace_labels, result_labels, metric)
 
-          output_file_mn.write("***> " + file_size + " " + metric.__name__ + ":\n")
-          output_file_mn.write(str(metric_output))
-          output_file_mn.write("\n\n\n")
+            output_file_mn.write("***> " + file_size + " " + metric.__name__ + ":\n")
+            output_file_mn.write(str(metric_output))
+            output_file_mn.write("\n\n\n")
 
     output_file_mn.close()
-

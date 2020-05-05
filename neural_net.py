@@ -14,7 +14,8 @@ class Perceptron(Module):
     def __init__(self, input_size=12, multi_layer=True):
         super(Perceptron, self).__init__()
         self.multi_layer = multi_layer
-        self.hidden = Linear(input_size, input_size)
+        if self.multi_layer:
+            self.hidden = Linear(input_size, input_size)
         self.output = Linear(input_size, 2)
 
     def forward(self, x):
@@ -90,6 +91,8 @@ if __name__ == '__main__':
 
         if addresses not in perceptrons:
             perceptrons[addresses] = Model(global_history, args.multi_layer, device)
+            model_parameters = filter(lambda p: p.requires_grad, perceptrons[addresses].model.parameters())
+            params = sum([np.prod(p.size()) for p in model_parameters])
 
         history_input = np.zeros(shape=(1, global_history))
         history_input[0, :] = np.array(list(history_str)).astype('int')

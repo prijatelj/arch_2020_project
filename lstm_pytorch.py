@@ -102,6 +102,8 @@ if __name__ == '__main__':
         if addresses not in myLSTMs:
             myLSTMs[addresses] = Model(global_history, args.multi_layer, device, args.mode)
             myLSTMs[addresses].model.hidden = myLSTMs[addresses].model.init_hidden()
+            model_parameters = filter(lambda p: p.requires_grad, myLSTMs[addresses].model.parameters())
+            params = sum([np.prod(p.size()) for p in model_parameters])
 
         history_input = np.zeros(shape=(1, 1, global_history))
         history_input[0, :] = np.array(list(history_str)).astype('int')

@@ -417,7 +417,7 @@ if __name__ == '__main__':
         batch_history=args.batch_history,
     )
 
-    labels_as_input = shift(labels, 1, cval=0)
+    labels_as_input = shift(labels, 1, cval=0).reshape(-1, 1)
 
     preds = np.round(np.concatenate(rnn.online(labels_as_input, labels)))
     logging.info('accuracy = %s', str(accuracy_score(labels, preds)))
